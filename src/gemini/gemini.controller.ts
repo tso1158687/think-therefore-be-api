@@ -1,10 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { GeminiService } from './gemini.service';
 
 @Controller('gemini')
 export class GeminiController {
+  constructor(private geminiService: GeminiService) {}
   @Get()
-  getGemini() {
+  getGemini(@Query() query: any) {
     console.log(process.env.TEST_CONFIG);
-    return 'This will return all Gemini data';
+    const { prompt } = query;
+    return this.geminiService.askGenerativeAI(prompt);
   }
 }
