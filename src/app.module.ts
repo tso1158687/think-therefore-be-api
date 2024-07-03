@@ -5,12 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GeminiModule } from './gemini/gemini.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    GeminiModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), GeminiModule],
   controllers: [AppController],
   providers: [AppService],
 })
