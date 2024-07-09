@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
 import { BehaviorSubject, filter } from 'rxjs';
+import { PreCondition } from 'src/data/pre-condition.enum';
 @Injectable()
 export class GeminiService {
   apiKeyReady$ = new BehaviorSubject<boolean>(false);
@@ -28,8 +29,15 @@ export class GeminiService {
     });
   }
 
-  async askGenerativeAI(prompt: string): Promise<string> {
-    const result = await this.aiModel.generateContent(prompt);
+  async askGenerativeAI(
+    prompt: string,
+    precondition: PreCondition = PreCondition.a,
+  ): Promise<string> {
+    console.log('prompt', prompt);
+    console.log('precondition', precondition);
+    const pre = PreCondition[precondition];
+    console.log('pre', pre);
+    const result = await this.aiModel.generateContent(`${prompt} ${pre}`);
     const response = await result.response;
     const text = response.text();
     return text;
