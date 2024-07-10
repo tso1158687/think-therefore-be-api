@@ -42,4 +42,42 @@ export class GeminiService {
     const text = response.text();
     return text;
   }
+
+  async askGenerativeAI2(
+    prompt: string,
+    precondition: PreCondition = PreCondition.a,
+  ): Promise<any> {
+    console.log('prompt', prompt);
+    console.log('precondition', precondition);
+    const pre = PreCondition[precondition];
+    console.log('pre', pre);
+    return await this.aiModel.generateContentStream(`${prompt}`);
+
+    // return await this.aiModel.generateContentStream(prompt);
+  }
+
+  async multichat(): Promise<any> {
+    const chat = this.aiModel.startChat({
+      history: [
+        {
+          role: 'user',
+          parts: [{ text: 'Hello, I have 2 dogs in my house.' }],
+        },
+        {
+          role: 'model',
+          parts: [{ text: 'Great to meet you. What would you like to know?' }],
+        },
+      ],
+      generationConfig: {
+        maxOutputTokens: 100,
+      },
+    });
+
+    const msg = 'How many paws are in my house?';
+
+    const result = await chat.sendMessage(msg);
+    const response = await result.response;
+    const text = response.text();
+    return text;
+  }
 }
