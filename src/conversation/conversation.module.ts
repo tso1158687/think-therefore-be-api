@@ -12,5 +12,6 @@ import { ConversationSchema } from 'src/schema/conversation.schema';
   ],
   providers: [ConversationService],
   controllers: [ConversationController],
+  exports: [ConversationService],
 })
 export class ConversationModule {}

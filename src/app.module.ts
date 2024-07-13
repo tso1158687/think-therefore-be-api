@@ -9,7 +9,7 @@ import { ConversationModule } from './conversation/conversation.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot('mongodb://localhost:27017/question_list'),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
     GeminiModule,
     ConversationModule,
   ],

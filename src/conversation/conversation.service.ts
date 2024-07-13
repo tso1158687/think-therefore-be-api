@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { from, Observable } from 'rxjs';
 import { ConversationDTO } from 'src/dto/conversation.dto';
 import { Conversation } from 'src/schema/conversation.schema';
 
@@ -13,6 +14,11 @@ export class ConversationService {
   async create(conversationDTO: ConversationDTO): Promise<Conversation> {
     const createdConversation = new this.conversationModel(conversationDTO);
     return createdConversation.save();
+  }
+
+  addConversation(conversationDTO: ConversationDTO): Observable<Conversation> {
+    const createdConversation = new this.conversationModel(conversationDTO);
+    return from(createdConversation.save());
   }
 
   async findAll(): Promise<Conversation[]> {

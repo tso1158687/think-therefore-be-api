@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { GeminiService } from './gemini.service';
+import { Observable } from 'rxjs';
 
 @Controller('gemini')
 export class GeminiController {
@@ -11,9 +12,11 @@ export class GeminiController {
   }
 
   @Post()
-  postGemini(@Body() body: any) {
+  postGemini(@Body() body: any): Observable<string> {
+    console.log('postGemini', body);
     const { prompt, precondition } = body;
-    return this.geminiService.askGenerativeAI(prompt, precondition);
+    // return this.geminiService.askGenerativeAI(prompt, precondition);
+    return this.geminiService.askGenmini(prompt, precondition);
   }
 
   @Get('test')

@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
-import { BehaviorSubject, filter } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, tap } from 'rxjs';
 import { PreCondition } from 'src/data/pre-condition.enum';
+import { ConversationService } from '../conversation/conversation.service';
+import { Role } from 'src/enum/role.enum';
+import { MessageDTO } from 'src/dto/conversation.dto';
 @Injectable()
 export class GeminiService {
   apiKeyReady$ = new BehaviorSubject<boolean>(false);
@@ -10,7 +13,10 @@ export class GeminiService {
   private genAi: GoogleGenerativeAI;
   private aiModel: GenerativeModel;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private conversationService: ConversationService,
+  ) {
     this.initApiKey();
     this.apiKeyReady$.pipe(filter((ready) => ready)).subscribe(() => {
       this.initAiModel();
@@ -41,6 +47,23 @@ export class GeminiService {
     const response = await result.response;
     const text = response.text();
     return text;
+  }
+
+  askGenmini(
+    prompt: string,
+    precondition: PreCondition = PreCondition.a,
+  ): Observable<string> {
+    const pre = PreCondition[precondition];
+    return from(this.aiModel.generateContent(`${prompt} ${pre}`)).pipe(
+      map((result) => result.response.text()),
+      tap((annwer) => {
+        this.conversationService
+          .addConversation({
+            messages: this.getMessageList(prompt, annwer),
+          })
+          .subscribe();
+      }),
+    );
   }
 
   async askGenerativeAI2(
@@ -79,5 +102,18 @@ export class GeminiService {
     const response = await result.response;
     const text = response.text();
     return text;
+  }
+
+  getMessageList(prompt: string, annwer: string): MessageDTO[] {
+    return [
+      {
+        role: Role.USER,
+        parts: [{ text: prompt }],
+      },
+      {
+        role: Role.MODEL,
+        parts: [{ text: annwer }],
+      },
+    ];
   }
 }
