@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { GeminiService } from './gemini.service';
 import { Observable } from 'rxjs';
+import { PreCondition } from 'src/data/pre-condition.enum';
+import { Conversation } from 'src/schema/conversation.schema';
 
 @Controller('gemini')
 export class GeminiController {
@@ -12,11 +14,21 @@ export class GeminiController {
   }
 
   @Post()
-  postGemini(@Body() body: any): Observable<string> {
+  postGemini(
+    @Body()
+    body: {
+      prompt: string;
+      precondition: PreCondition;
+      conversationList: Conversation[];
+    },
+  ): Observable<string> {
     console.log('postGemini', body);
-    const { prompt, precondition } = body;
-    // return this.geminiService.askGenerativeAI(prompt, precondition);
-    return this.geminiService.askGenmini(prompt, precondition);
+    const { prompt, precondition, conversationList } = body;
+    return this.geminiService.askGenmini(
+      prompt,
+      precondition,
+      conversationList,
+    );
   }
 
   @Get('test')

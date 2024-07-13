@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Param, Body, Put } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { ConversationDTO } from 'src/dto/conversation.dto';
+import { Observable } from 'rxjs';
+import { Conversation } from 'src/schema/conversation.schema';
 
 @Controller('conversations')
 export class ConversationController {
@@ -12,13 +14,13 @@ export class ConversationController {
   }
 
   @Get()
-  async findAll() {
-    return this.conversationService.findAll();
+  getConversationList(): Observable<Conversation[]> {
+    return this.conversationService.getConversationList();
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
-    return this.conversationService.findById(id);
+  findById(@Param('id') id: string): Observable<Conversation> {
+    return this.conversationService.getConversationById(id);
   }
 
   @Put(':id')

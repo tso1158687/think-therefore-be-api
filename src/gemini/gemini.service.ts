@@ -6,6 +6,7 @@ import { PreCondition } from 'src/data/pre-condition.enum';
 import { ConversationService } from '../conversation/conversation.service';
 import { Role } from 'src/enum/role.enum';
 import { MessageDTO } from 'src/dto/conversation.dto';
+import { Conversation } from 'src/schema/conversation.schema';
 @Injectable()
 export class GeminiService {
   apiKeyReady$ = new BehaviorSubject<boolean>(false);
@@ -52,6 +53,7 @@ export class GeminiService {
   askGenmini(
     prompt: string,
     precondition: PreCondition = PreCondition.a,
+    conversationList?: Conversation[],
   ): Observable<string> {
     const pre = PreCondition[precondition];
     return from(this.aiModel.generateContent(`${prompt} ${pre}`)).pipe(
@@ -91,9 +93,6 @@ export class GeminiService {
           parts: [{ text: 'Great to meet you. What would you like to know?' }],
         },
       ],
-      generationConfig: {
-        maxOutputTokens: 100,
-      },
     });
 
     const msg = 'How many paws are in my house?';

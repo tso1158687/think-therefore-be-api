@@ -21,6 +21,14 @@ export class ConversationService {
     return from(createdConversation.save());
   }
 
+  getConversationList(): Observable<Conversation[]> {
+    return from(this.conversationModel.find().exec());
+  }
+
+  getConversationById(id: string): Observable<Conversation> {
+    return from(this.conversationModel.findById(id).exec());
+  }
+
   async findAll(): Promise<Conversation[]> {
     return this.conversationModel.find().exec();
   }
