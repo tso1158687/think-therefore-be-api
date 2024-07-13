@@ -19,6 +19,6 @@ export class GeminiController {
   @Get('test')
   test(@Query() query: any) {
     const { prompt, precondition } = query;
-    return this.geminiService.multichat()
+    return this.geminiService.multichat();
   }
 }
