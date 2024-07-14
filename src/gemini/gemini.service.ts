@@ -138,11 +138,11 @@ export class GeminiService {
   ): Observable<Conversation> {
     const messages: Content[] = [
       {
-        role: Role.MODEL,
+        role: Role.USER,
         parts: [{ text: question }],
       },
       {
-        role: Role.USER,
+        role: Role.MODEL,
         parts: [
           {
             text: asnwer,
