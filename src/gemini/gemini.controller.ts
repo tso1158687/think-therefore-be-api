@@ -19,14 +19,16 @@ export class GeminiController {
     body: {
       prompt: string;
       precondition: PreCondition;
-      conversationList: Conversation[];
+      id?: string;
+      conversationList?: Conversation[];
     },
   ): Observable<string> {
     console.log('postGemini', body);
-    const { prompt, precondition, conversationList } = body;
+    const { prompt, precondition, conversationList, id } = body;
     return this.geminiService.askGenmini(
       prompt,
       precondition,
+      id,
       conversationList,
     );
   }

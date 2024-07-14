@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { from, Observable } from 'rxjs';
 import { ConversationDTO } from 'src/dto/conversation.dto';
-import { Conversation } from 'src/schema/conversation.schema';
+import { Conversation, Message } from 'src/schema/conversation.schema';
 
 @Injectable()
 export class ConversationService {
@@ -23,6 +23,25 @@ export class ConversationService {
 
   getConversationList(): Observable<Conversation[]> {
     return from(this.conversationModel.find().exec());
+  }
+
+  updateConversation(
+    id: string,
+    conversationDTO: ConversationDTO,
+  ): Observable<Conversation> {
+    return from(
+      this.conversationModel
+        .findByIdAndUpdate(id, conversationDTO, { new: true })
+        .exec(),
+    );
+  }
+
+  updateMessages(id: string, messages: Message[]): Observable<Conversation> {
+    return from(
+      this.conversationModel
+        .findByIdAndUpdate(id, { $push: { messages: messages } }, { new: true })
+        .exec(),
+    );
   }
 
   getConversationById(id: string): Observable<Conversation> {

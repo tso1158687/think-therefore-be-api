@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
+import {
+  Content,
+  GenerativeModel,
+  GoogleGenerativeAI,
+} from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
 import { BehaviorSubject, filter, from, map, Observable, tap } from 'rxjs';
 import { PreCondition } from 'src/data/pre-condition.enum';
 import { ConversationService } from '../conversation/conversation.service';
 import { Role } from 'src/enum/role.enum';
 import { MessageDTO } from 'src/dto/conversation.dto';
-import { Conversation } from 'src/schema/conversation.schema';
+import { Conversation, Message } from 'src/schema/conversation.schema';
 @Injectable()
 export class GeminiService {
   apiKeyReady$ = new BehaviorSubject<boolean>(false);
@@ -53,17 +57,21 @@ export class GeminiService {
   askGenmini(
     prompt: string,
     precondition: PreCondition = PreCondition.a,
+    id?: string,
     conversationList?: Conversation[],
   ): Observable<string> {
+    const history: Content[] = (conversationList as any) ?? [];
+    console.log(history);
     const pre = PreCondition[precondition];
-    return from(this.aiModel.generateContent(`${prompt} ${pre}`)).pipe(
+    const chat = this.aiModel.startChat({ history });
+
+    return from(chat.sendMessage(`${prompt} ${pre}`)).pipe(
       map((result) => result.response.text()),
-      tap((annwer) => {
-        this.conversationService
-          .addConversation({
-            messages: this.getMessageList(prompt, annwer),
-          })
-          .subscribe();
+      tap((answer) => {
+        const c$ = id
+          ? this.updateConversation(id, prompt, answer)
+          : this.addConversation(prompt, answer);
+        c$.subscribe();
       }),
     );
   }
@@ -114,5 +122,35 @@ export class GeminiService {
         parts: [{ text: annwer }],
       },
     ];
+  }
+
+  addConversation(prompt: string, answer: string): Observable<Conversation> {
+    console.log('add');
+    return this.conversationService.addConversation({
+      messages: this.getMessageList(prompt, answer),
+    });
+  }
+
+  updateConversation(
+    id: string,
+    question: string,
+    asnwer: string,
+  ): Observable<Conversation> {
+    const messages: Content[] = [
+      {
+        role: Role.MODEL,
+        parts: [{ text: question }],
+      },
+      {
+        role: Role.USER,
+        parts: [
+          {
+            text: asnwer,
+          },
+        ],
+      },
+    ];
+    console.log('update', messages);
+    return this.conversationService.updateMessages(id, messages as Message[]);
   }
 }
