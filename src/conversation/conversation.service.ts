@@ -22,7 +22,26 @@ export class ConversationService {
   }
 
   getConversationList(): Observable<Conversation[]> {
-    return from(this.conversationModel.find().exec());
+    console.log('getConversationList');
+    return from(this.conversationModel.find()
+    .sort({ createdAt: -1 })
+    .exec());
+  }
+
+  findAllWithPagination(
+    page: number,
+    limit: number,
+    sort: string,
+  ): Observable<Conversation[]> {
+    const skip = (page - 1) * limit;
+    return from(
+      this.conversationModel
+        .find()
+        .sort({ createdAt: sort === 'asc' ? 1 : -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+    );
   }
 
   updateConversation(
