@@ -23,9 +23,7 @@ export class ConversationService {
 
   getConversationList(): Observable<Conversation[]> {
     console.log('getConversationList');
-    return from(this.conversationModel.find()
-    .sort({ createdAt: -1 })
-    .exec());
+    return from(this.conversationModel.find().sort({ createdAt: -1 }).exec());
   }
 
   findAllWithPagination(

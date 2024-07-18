@@ -5,7 +5,14 @@ import {
   GoogleGenerativeAI,
 } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
-import { BehaviorSubject, filter, from, map, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  from,
+  map,
+  Observable,
+  switchMap,
+} from 'rxjs';
 import { PreCondition } from 'src/data/pre-condition.enum';
 import { ConversationService } from '../conversation/conversation.service';
 import { Role } from 'src/enum/role.enum';
@@ -58,20 +65,20 @@ export class GeminiService {
     prompt: string,
     precondition: PreCondition = PreCondition.a,
     id?: string,
-    conversationList?: Conversation[],
-  ): Observable<string> {
-    const history: Content[] = (conversationList as any) ?? [];
-    console.log(history);
+    messageList?: Message[],
+  ): Observable<Conversation> {
+    const history: Content[] = (messageList as any) ?? [];
+
     const pre = PreCondition[precondition];
     const chat = this.aiModel.startChat({ history });
 
     return from(chat.sendMessage(`${prompt} ${pre}`)).pipe(
       map((result) => result.response.text()),
-      tap((answer) => {
-        const c$ = id
+      switchMap((answer) => {
+        const conversation$ = id
           ? this.updateConversation(id, prompt, answer)
           : this.addConversation(prompt, answer);
-        c$.subscribe();
+        return conversation$;
       }),
     );
   }
