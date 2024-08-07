@@ -3,14 +3,13 @@ import { GeminiService } from './gemini.service';
 import { Observable, of } from 'rxjs';
 import { PreCondition } from 'src/data/pre-condition.enum';
 import { Conversation, Message } from 'src/schema/conversation.schema';
-
+import { v4 as uuidv4 } from 'uuid';
 @Controller('gemini')
 export class GeminiController {
   constructor(private geminiService: GeminiService) {}
   @Get()
-  getGemini(@Query() query: any) {
-    const { prompt, precondition } = query;
-    return this.geminiService.askGenerativeAI(prompt, precondition);
+  getUUID(): Observable<string> {
+    return of(uuidv4());
   }
 
   @Post('first')
