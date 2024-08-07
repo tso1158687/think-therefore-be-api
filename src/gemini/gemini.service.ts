@@ -33,8 +33,6 @@ export class GeminiService {
     this.apiKeyReady$.pipe(filter((ready) => ready)).subscribe(() => {
       this.initAiModel();
     });
-
-    // this.aiModel.
   }
 
   initApiKey(): void {
@@ -86,7 +84,6 @@ export class GeminiService {
   }
 
   addConversation(prompt: string, answer: string): Observable<Conversation> {
-    console.log('add');
     return this.conversationService.addConversation({
       messages: this.getMessageList(prompt, answer),
     });

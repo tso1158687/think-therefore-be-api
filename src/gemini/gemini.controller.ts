@@ -12,19 +12,6 @@ export class GeminiController {
     return of(uuidv4());
   }
 
-  @Post('first')
-  postGeminiFirst(
-    @Body()
-    body: {
-      prompt: string;
-      precondition: PreCondition;
-    },
-  ): Observable<Conversation[]> {
-    console.log('postGeminiFirst', body);
-    const { prompt, precondition } = body;
-    return of([]);
-  }
-
   @Post()
   postGemini(
     @Body()

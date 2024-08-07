@@ -10,12 +10,10 @@ export class ConversationService {
   constructor(
     @InjectModel('Conversation') private conversationModel: Model<Conversation>,
   ) {}
-
   async create(conversationDTO: ConversationDTO): Promise<Conversation> {
     const createdConversation = new this.conversationModel(conversationDTO);
     return createdConversation.save();
   }
-
   addConversation(conversationDTO: ConversationDTO): Observable<Conversation> {
     const createdConversation = new this.conversationModel(conversationDTO);
     return from(createdConversation.save());
@@ -62,7 +60,11 @@ export class ConversationService {
   }
 
   getConversationById(id: string): Observable<Conversation> {
-    return from(this.conversationModel.findById(id).exec());
+    return from(
+      this.conversationModel
+        .findByIdAndUpdate(id, { $inc: { count: 1 } }, { new: true })
+        .exec(),
+    );
   }
 
   async findAll(): Promise<Conversation[]> {

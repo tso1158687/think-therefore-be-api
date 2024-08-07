@@ -4,6 +4,7 @@ export class MessagePartDTO {
 
 export class MessageDTO {
   role: 'user' | 'model';
+  precondition?: string;
   parts: MessagePartDTO[];
 }
 
@@ -12,4 +13,6 @@ export class ConversationDTO {
   messages: MessageDTO[];
   createdAt?: Date;
   updatedAt?: Date;
+  isPrivate?: boolean;
+  count?: number;
 }

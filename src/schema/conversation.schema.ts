@@ -12,6 +12,8 @@ export const MessageSchema = new Schema({
 export const ConversationSchema = new Schema(
   {
     messages: { type: [MessageSchema], required: true },
+    isPrivate: { type: Boolean, default: false },
+    count: { type: Number, default: 0 },
   },
   {
     timestamps: true, // 自動管理 createdAt 和 updatedAt
@@ -25,9 +27,11 @@ export interface MessagePart extends Document {
 export interface Message extends Document {
   role: 'user' | 'model';
   parts: MessagePart[];
+  precondition?: string;
 }
 
 export interface Conversation extends Document {
+  _id: string;
   messages: Message[];
   createdAt: Date;
   updatedAt: Date;
