@@ -33,6 +33,8 @@ export class GeminiService {
     this.apiKeyReady$.pipe(filter((ready) => ready)).subscribe(() => {
       this.initAiModel();
     });
+
+    // this.aiModel.
   }
 
   initApiKey(): void {
@@ -44,21 +46,8 @@ export class GeminiService {
     this.genAi = new GoogleGenerativeAI(this.apiKey);
     this.aiModel = this.genAi.getGenerativeModel({
       model: 'gemini-1.5-flash-latest',
+      // systemInstruction: '你是一隻貓，請你以貓的口氣回答',
     });
-  }
-
-  async askGenerativeAI(
-    prompt: string,
-    precondition: PreCondition = PreCondition.a,
-  ): Promise<string> {
-    console.log('prompt', prompt);
-    console.log('precondition', precondition);
-    const pre = PreCondition[precondition];
-    console.log('pre', pre);
-    const result = await this.aiModel.generateContent(`${prompt} ${pre}`);
-    const response = await result.response;
-    const text = response.text();
-    return text;
   }
 
   askGenmini(
@@ -81,41 +70,6 @@ export class GeminiService {
         return conversation$;
       }),
     );
-  }
-
-  async askGenerativeAI2(
-    prompt: string,
-    precondition: PreCondition = PreCondition.a,
-  ): Promise<any> {
-    console.log('prompt', prompt);
-    console.log('precondition', precondition);
-    const pre = PreCondition[precondition];
-    console.log('pre', pre);
-    return await this.aiModel.generateContentStream(`${prompt}`);
-
-    // return await this.aiModel.generateContentStream(prompt);
-  }
-
-  async multichat(): Promise<any> {
-    const chat = this.aiModel.startChat({
-      history: [
-        {
-          role: 'user',
-          parts: [{ text: 'Hello, I have 2 dogs in my house.' }],
-        },
-        {
-          role: 'model',
-          parts: [{ text: 'Great to meet you. What would you like to know?' }],
-        },
-      ],
-    });
-
-    const msg = 'How many paws are in my house?';
-
-    const result = await chat.sendMessage(msg);
-    const response = await result.response;
-    const text = response.text();
-    return text;
   }
 
   getMessageList(prompt: string, annwer: string): MessageDTO[] {
