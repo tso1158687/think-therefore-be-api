@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { PreCondition } from 'src/data/pre-condition.enum';
 import { Conversation, Message } from 'src/schema/conversation.schema';
 import { v4 as uuidv4 } from 'uuid';
+import { Lang } from 'src/enum/lang.enum';
 @Controller('gemini')
 export class GeminiController {
   constructor(private geminiService: GeminiService) {}
@@ -13,11 +14,12 @@ export class GeminiController {
   }
 
   @Post()
-  postGemini(
+  askGemini(
     @Body()
     body: {
       prompt: string;
       precondition: PreCondition;
+      lang: Lang;
       id?: string;
       messageList?: Message[];
     },

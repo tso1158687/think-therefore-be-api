@@ -24,10 +24,10 @@ export class ConversationService {
     return from(this.conversationModel.find().sort({ createdAt: -1 }).exec());
   }
 
-  findAllWithPagination(
-    page: number,
-    limit: number,
-    sort: string,
+  getConversationWithPagination(
+    page = 1,
+    limit = 10,
+    sort?: string,
   ): Observable<Conversation[]> {
     const skip = (page - 1) * limit;
     return from(

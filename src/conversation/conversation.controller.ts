@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, Put } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Query } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { ConversationDTO } from 'src/dto/conversation.dto';
 import { Observable } from 'rxjs';
@@ -14,8 +14,11 @@ export class ConversationController {
   }
 
   @Get()
-  getConversationList(): Observable<Conversation[]> {
-    return this.conversationService.getConversationList();
+  getConversationList(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Observable<Conversation[]> {
+    return this.conversationService.getConversationWithPagination(page, limit);
   }
 
   @Get(':id')
