@@ -18,6 +18,7 @@ import { ConversationService } from '../conversation/conversation.service';
 import { Role } from 'src/enum/role.enum';
 import { MessageDTO } from 'src/dto/conversation.dto';
 import { Conversation, Message } from 'src/schema/conversation.schema';
+import { Lang } from '../enum/lang.enum';
 @Injectable()
 export class GeminiService {
   apiKeyReady$ = new BehaviorSubject<boolean>(false);
@@ -51,6 +52,7 @@ export class GeminiService {
   askGenmini(
     prompt: string,
     precondition: PreCondition = PreCondition.a,
+    lang: Lang,
     id?: string,
     messageList?: Message[],
   ): Observable<Conversation> {
@@ -58,8 +60,9 @@ export class GeminiService {
 
     const pre = PreCondition[precondition];
     const chat = this.aiModel.startChat({ history });
-
-    return from(chat.sendMessage(`${prompt} ${pre}`)).pipe(
+    const langPrompt =
+      lang === Lang.EN ? 'Please answer in English: ' : '請以繁體中文回答';
+    return from(chat.sendMessage(`${prompt} ${pre} ${langPrompt}`)).pipe(
       map((result) => result.response.text()),
       switchMap((answer) => {
         const conversation$ = id

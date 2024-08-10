@@ -25,7 +25,13 @@ export class GeminiController {
     },
   ): Observable<Conversation> {
     console.log('postGemini', body);
-    const { prompt, precondition, messageList, id } = body;
-    return this.geminiService.askGenmini(prompt, precondition, id, messageList);
+    const { prompt, precondition, lang, messageList, id } = body;
+    return this.geminiService.askGenmini(
+      prompt,
+      precondition,
+      lang,
+      id,
+      messageList,
+    );
   }
 }
